@@ -15,6 +15,13 @@ export default function App() {
   const [search, setSearch] = useState('');
   const [filterSector, setFilterSector] = useState('');
   const [selectedCity, setSelectedCity] = useState<string>('Noisy-le-Roi');
+  const [isCityMenuOpen, setIsCityMenuOpen] = useState(false);
+
+  const handleCityChange = (city: string) => {
+    setSelectedCity(city);
+    setSelectedProspect(null);
+    setIsCityMenuOpen(false);
+  };
 
   const filteredProspects = useMemo(() => {
     return PROSPECTS.filter(p => {
@@ -88,26 +95,38 @@ export default function App() {
             <div className="md:hidden w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
               <TargetIcon className="w-5 h-5 text-white" />
             </div>
-            <div className="relative group">
-              <button className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-black/5 rounded-xl hover:bg-gray-100 transition-all">
+            <div className="relative">
+              <button 
+                onClick={() => setIsCityMenuOpen(!isCityMenuOpen)}
+                className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-black/5 rounded-xl hover:bg-gray-100 transition-all active:scale-95"
+              >
                 <MapPin className="w-4 h-4 text-blue-600" />
                 <span className="text-sm font-bold">{selectedCity}</span>
-                <ChevronDown className="w-4 h-4 text-gray-400" />
+                <ChevronDown className={cn("w-4 h-4 text-gray-400 transition-transform", isCityMenuOpen && "rotate-180")} />
               </button>
-              <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-black/5 rounded-2xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden">
-                {Object.keys(CITIES).map(city => (
-                  <button 
-                    key={city}
-                    onClick={() => setSelectedCity(city)}
-                    className={cn(
-                      "w-full text-left px-4 py-3 text-sm font-medium hover:bg-gray-50 transition-colors",
-                      selectedCity === city ? "text-blue-600 bg-blue-50/50" : "text-gray-600"
-                    )}
-                  >
-                    {city}
-                  </button>
-                ))}
-              </div>
+              
+              {isCityMenuOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setIsCityMenuOpen(false)}
+                  />
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-black/5 rounded-2xl shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    {Object.keys(CITIES).map(city => (
+                      <button 
+                        key={city}
+                        onClick={() => handleCityChange(city)}
+                        className={cn(
+                          "w-full text-left px-4 py-3 text-sm font-medium hover:bg-gray-50 transition-colors",
+                          selectedCity === city ? "text-blue-600 bg-blue-50/50" : "text-gray-600"
+                        )}
+                      >
+                        {city}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
           
@@ -125,7 +144,7 @@ export default function App() {
 
         {/* View Content */}
         <div className="flex-1 overflow-hidden relative">
-          {currentView === 'dashboard' && <Dashboard />}
+          {currentView === 'dashboard' && <Dashboard prospects={filteredProspects} />}
           
           {currentView === 'list' && (
             <div className="flex h-full">

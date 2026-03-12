@@ -8,14 +8,14 @@ import { Users, Target, CheckCircle2, AlertCircle } from 'lucide-react';
 
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
 
-export default function Dashboard() {
-  const total = PROSPECTS.length;
-  const contacted = PROSPECTS.filter(p => p.statut !== 'À contacter').length;
-  const highPriority = PROSPECTS.filter(p => p.priorite === 'Très haute').length;
-  const responded = PROSPECTS.filter(p => p.repondu === 'OUI').length;
+export default function Dashboard({ prospects }: { prospects: Business[] }) {
+  const total = prospects.length;
+  const contacted = prospects.filter(p => p.statut !== 'À contacter').length;
+  const highPriority = prospects.filter(p => p.priorite === 'Très haute').length;
+  const responded = prospects.filter(p => p.repondu === 'OUI').length;
 
   const sectorData = Object.entries(
-    PROSPECTS.reduce((acc, curr) => {
+    prospects.reduce((acc, curr) => {
       acc[curr.secteur] = (acc[curr.secteur] || 0) + 1;
       return acc;
     }, {} as Record<string, number>)
@@ -24,7 +24,7 @@ export default function Dashboard() {
    .slice(0, 5);
 
   const statusData = Object.entries(
-    PROSPECTS.reduce((acc, curr) => {
+    prospects.reduce((acc, curr) => {
       acc[curr.statut] = (acc[curr.statut] || 0) + 1;
       return acc;
     }, {} as Record<string, number>)
