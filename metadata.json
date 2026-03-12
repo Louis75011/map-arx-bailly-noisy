@@ -1,0 +1,5 @@
+{
+  "name": "Arx Prospector",
+  "description": "Tableau de bord de prospection commerciale pour Arx Systema à Noisy-le-Roi",
+  "requestFramePermissions": ["geolocation"]
+}
